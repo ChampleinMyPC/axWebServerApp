@@ -2,11 +2,11 @@
 	"schemaVersion": "1.8.0",
 	"acapPackageConf": {
 		"setup": {
-			"appName": "web_server_rev_proxy",
+			"appName": "web_server_rev_proxy_dev",
 			"vendor": "MyPC Communications",
 			"embeddedSdkVersion": "3.0",
 			"runMode": "respawn",
-			"version": "13.12.0"
+			"version": "1.11.0"
 		},
 		"configuration": {
 			"settingPage": "index.html",

@@ -1,36 +1,70 @@
-# Serveur HTTP via Proxy Inverse
+*Copyright (C) 2021, Axis Communications AB, Lund, Sweden. All Rights Reserved.*
 
-Cet exemple démontre comment configurer le serveur web de l'appareil Axis (Apache) en mode [Proxy Inverse](https://httpd.apache.org/docs/2.4/howto/reverse_proxy.html), où les requêtes HTTP vers l'application sont routées vers un serveur web [CivetWeb](https://github.com/civetweb/civetweb) s'exécutant à l'intérieur de l'application ACAP et agissant comme CGI.
+# Serve HTTP requests through reverse proxy
 
-L'avantage d'un serveur web proxy est que lors du portage de code existant vers votre application ACAP, la gestion de ses requêtes peut rester largement inchangée. Cela facilite le partage de code entre plateformes. La méthode proxy inverse applique un schéma d'URL comme suit :
+This example demonstrates how to setup the Axis device web server (Apache) in a
+[Reverse Proxy](https://httpd.apache.org/docs/2.4/howto/reverse_proxy.html)
+configuration, where HTTP requests to the application are routed to a web server
+[CivetWeb](https://github.com/civetweb/civetweb) running inside the ACAP application
+and acting as a CGI.
+
+The advantage of a webserver proxy is that when porting existing code to your
+ACAP application, its request handling can remain largely unmodified. This eases
+the task of sharing code between platforms. The webserver proxy method enforces
+a URL routing scheme as follows:
 
 `http://<AXIS_DEVICE_IP>/local/<appName>/<apiPath>`
 
-Avec `<appName>` et `<apiPath>` définis dans le manifest.
+With `<appName>` and `<apiPath>` as defined in the manifest.
 
-Notez que cet exemple montre le concept de proxy inverse en utilisant CivetWeb, mais vous êtes libre d'utiliser n'importe quel serveur web de votre choix.
+Note that this example shows the reverse proxy concept using CivetWeb, but you are
+free to use any webserver of your choice.
 
-## Approche alternative
+## Alternative approach
 
-Un autre exemple servant des requêtes HTTP est [web-server-using-fastcgi](../web-server-using-fastcgi), où le serveur web de l'appareil Axis et l'API [FastCGI](https://developer.axis.com/acap/api/native-sdk-api/#fastcgi) prise en charge par ACAP sont utilisés.
+Another example that serves HTTP requests is
+[web-server-using-fastcgi](../web-server-using-fastcgi), where the Axis device
+web server and the supported ACAP API
+[FastCGI](https://developer.axis.com/acap/api/native-sdk-api/#fastcgi)
+are used.
 
-## Configuration du proxy inverse dans le serveur Apache
+## Reverse proxy configuration in Apache server
 
-Une configuration de proxy inverse offre un moyen flexible pour une application ACAP d'exposer une API externe via le serveur Apache dans AXIS OS et d'acheminer en interne les requêtes vers un serveur web s'exécutant dans l'application ACAP.
+A reverse proxy configuration provides a flexible way for an ACAP application
+to expose an external API through the Apache Server in AXIS OS and internally
+route the requests to a web server running in the ACAP application.
 
-Le serveur Apache est configuré en utilisant le fichier `manifest.json` dans une application ACAP. Dans `manifest.json` sous `configuration`, il est possible de spécifier un `settingPage` et un `reverseProxy` où ce dernier connecte le serveur CivetWeb au serveur Apache.
+The Apache server is configured using the `manifest.json` file in an ACAP
+application. In `manifest.json` under `configuration`, it is possible to specify
+a `settingPage` and a `reverseProxy` where the latter will connect the CivetWeb
+server to the Apache server.
 
-Avant la version 1.5.0 du manifest, le proxy inverse n'était pris en charge que via le script postinstall. La méthode basée sur le manifest est plus stricte sur les URLs afin d'éviter les conflits de noms pouvant survenir dans l'ancien mécanisme. Lors de la mise à niveau, vos URLs changeront vers le format présenté dans [Serveur HTTP via Proxy Inverse](#serveur-http-via-proxy-inverse).
+Prior to manifest 1.5.0, reverse proxy was only supported through the
+postinstall script. The manifest based method is more strict on URLs in order to
+avoid name clashes that could occur in the old mechanism. When upgrading, your
+URLs will change to the format shown in
+[Serve HTTP requests through reverse proxy](#serve-http-requests-through-reverse-proxy).
 
-Le serveur web s'exécutant dans l'application ACAP peut également être exposé directement au réseau en permettant l'accès externe au port dans la configuration réseau de l'appareil. Il y a des inconvénients à exposer le serveur web directement au réseau tels que des ports non standard et l'absence de réutilisation de l'authentification, du TLS et d'autres fonctionnalités fournies par le serveur Apache.
+The web server running in the ACAP application can also be exposed directly to
+the network by allowing external access to the port in the network
+configuration for the device. There are disadvantages with exposing Web
+Server directly to the network such as non standard ports and no reuse of
+authentication, TLS and other features that comes with Apache Server.
 
-## Serveur web CivetWeb
+## CivetWeb web server
 
-CivetWeb est un serveur web embarquable C pour Linux. C'est une excellente solution pour exécuter un serveur web sur Linux embarqué. En plus d'être un serveur HTTP, il a une API C qui peut être étendue comme souhaité. La documentation du serveur web CivetWeb [documentation](https://github.com/civetweb/civetweb/) décrit la configuration en détail. CivetWeb est open source et contiendra différentes licences selon les fonctionnalités que vous compilez. Veuillez consulter le [dépôt de CivetWeb](https://github.com/civetweb/civetweb/) pour plus d'informations.
+CivetWeb is an embeddable C web server for Linux. It is a great solution
+for running a web server on embedded Linux. Apart from being a
+HTTP server, it has a C API which can be extended as desired. The CivetWeb Web
+Server [documentation](https://github.com/civetweb/civetweb/) describes the
+configuration in detail. CivetWeb is open source, and will contain different
+licenses depending on the features you build it with. Please see
+[CivetWeb's repository](https://github.com/civetweb/civetweb/) for more information.
 
-## Pour commencer
+## Getting started
 
-Ces instructions vous guideront sur la façon d'exécuter le code. Voici la structure utilisée dans l'exemple :
+These instructions will guide you on how to execute the code. Below is the
+structure used in the example:
 
 ```sh
 web-server
@@ -41,110 +75,105 @@ web-server
 └── README.md
 ```
 
-- **app/LICENSE** - Liste le code source sous licence open source dans l'application.
-- **app/manifest.json** - Définit l'application et sa configuration.
-- **Dockerfile** - Construit une image conteneur Axis et l'exemple spécifié.
-- **README.md** - Instructions étape par étape pour exécuter l'exemple.
+- **app/LICENSE** - Lists open source licensed source code in the application.
+- **app/manifest.json** - Defines the application and its configuration.
+- **Dockerfile** - Builds an Axis container image and the specified example.
+- **README.md** - Step by step instructions on how to run the example.
 
 ## Limitations
 
-- Le proxy inverse Apache ne peut pas traduire le contenu avec des adresses absolues (c'est-à-dire /image.png) dans la page HTML. Utilisez uniquement du contenu relatif (c'est-à-dire image.png ou ../image.png). Voir [comment gérer correctement les URLs relatives avec un proxy inverse](https://serverfault.com/questions/561892/how-to-handle-relative-urls-correctly-with-a-reverse-proxy) pour plus d'informations.
+- Apache Reverse Proxy can not translate content with absolute addresses (i.e.
+  /image.png) in the HTML page. Use only relative content (i.e. image.png or
+../image.png). See [how to handle relative URLs correctly with a reverse proxy](https://serverfault.com/questions/561892/how-to-handle-relative-urls-correctly-with-a-reverse-proxy)
+for more information.
 
-### Comment exécuter le code
+### How to run the code
 
-Voici les instructions étape par étape pour exécuter le programme. Essentiellement, commencer par la génération du fichier .eap à l'exécution sur un appareil.
+Below is the step by step instructions on how to execute the program. So
+basically starting with the generation of the .eap file to running it on a
+device.
 
-#### Construire l'application
+#### Build the application
 
-En étant dans votre répertoire de travail, exécutez les commandes suivantes :
+Standing in your working directory run the following commands:
 
 > [!NOTE]
 >
-> Selon le réseau sur lequel votre machine de construction locale est connectée,
-vous devrez peut-être ajouter des paramètres proxy
-> pour Docker. Voir
-> [Proxy lors de la construction](https://developer.axis.com/acap/develop/proxy/#proxy-in-build-time).
+> Depending on the network your local build machine is connected to,
+you may need to add proxy
+> settings for Docker. See
+> [Proxy in build time](https://developer.axis.com/acap/develop/proxy/#proxy-in-build-time).
 
 ```sh
 docker build --tag <APP_IMAGE> --build-arg ARCH=<ARCH> .
 ```
 
-- `<APP_IMAGE>` est le nom pour taguer l'image, par exemple `web-server:1.0`
-- `<ARCH>` est l'architecture du SDK, `armv7hf` ou `aarch64`.
+- `<APP_IMAGE>` is the name to tag the image with, e.g., `web-server:1.0`
+- `<ARCH>` is the SDK architecture, `armv7hf` or `aarch64`.
 
-Copiez le résultat de l'image conteneur vers un répertoire local `build` :
+Copy the result from the container image to a local directory `build`:
 
 ```sh
 docker cp $(docker create <APP_IMAGE>):/opt/app ./build
 ```
 
-Le répertoire `build` contient les artefacts de construction, où l'application ACAP se trouve avec le suffixe `.eap`, selon l'architecture du SDK choisie, l'un de ces fichiers devrait être présent :
+The `build` directory contains the build artifacts, where the ACAP application
+is found with suffix `.eap`, depending on which SDK architecture that was
+chosen, one of these files should be found:
 
 - `web_server_rev_proxy_1_0_0_aarch64.eap`
 - `web_server_rev_proxy_1_0_0_armv7hf.eap`
 
-#### Installer et démarrer l'application
+#### Install and start the application
 
-Accédez à la page des applications de l'appareil Axis :
+Browse to the application page of the Axis device:
 
 ```sh
 http://<AXIS_DEVICE_IP>/index.html#apps
 ```
 
-- Cliquez sur l'onglet `Apps` dans l'interface utilisateur de l'appareil
-- Activez le commutateur `Allow unsigned apps`
-- Cliquez sur le bouton `(+ Add app)` pour télécharger l'application
-- Parcourez pour sélectionner l'application ACAP nouvellement construite, selon l'architecture :
+- Click on the tab `Apps` in the device GUI
+- Enable `Allow unsigned apps` toggle
+- Click `(+ Add app)` button to upload the application file
+- Browse to the newly built ACAP application, depending on architecture:
   - `web_server_rev_proxy_1_0_0_aarch64.eap`
   - `web_server_rev_proxy_1_0_0_armv7hf.eap`
-- Cliquez sur `Install`
-- Démarrez l'application en activant le commutateur `Start`
+- Click `Install`
+- Run the application by enabling the `Start` switch
 
-#### La sortie attendue
+#### The expected output
 
-Un utilisateur peut faire une requête HTTP à l'API de l'application en utilisant par exemple cURL
+A user can make a HTTP request to the application API using e.g. cURL
 
 ```sh
 curl -u <USER>:<PASSWORD> --anyauth http://<AXIS_DEVICE_IP>/local/web_server_rev_proxy/my_web_server
 ```
 
-Avec la sortie attendue
+Where the expected output is
 
 ```sh
 <html>
  <head><link rel="stylesheet" href="style.css"/></head>
  <title>
-  Exemple de serveur web ACAP
+  ACAP Web Server Example
  </title>
  <body>
-  <h1>Exemple de serveur web ACAP</h1>
-  Bienvenue sur l'exemple de serveur web, ce serveur est basé sur la bibliothèque C 
-        <a href="https://github.com/civetweb/civetweb">CivetWeb</a>.
+  <h1>ACAP Web Server Example</h1>
+  Welcome to the web server example, this server is based on the 
+        <a href="https://github.com/civetweb/civetweb">CivetWeb</a> C library.
  </body>
 </html>
 ```
 
-Comme on peut le voir, c'est du code HTML, parcourez la page web
+As can be seen it's HTML code, browse to web page
 `http://<AXIS_DEVICE_IP>/local/web_server_rev_proxy/my_web_server`
-pour la voir rendue.
+for seeing it rendered.
 
-Le journal de l'application peut être trouvé soit par
+The application log can be found by either
 
-- Parcourir `http://<AXIS_DEVICE_IP>/axis-cgi/admin/systemlog.cgi?appname=web_server_rev_proxy`.
-- Parcourir la page des applications et cliquer sur `App log`.
+- Browse to `http://<AXIS_DEVICE_IP>/axis-cgi/admin/systemlog.cgi?appname=web_server_rev_proxy`.
+- Browse to the application page and click the `App log`.
 
-## Rôles des fichiers
+## License
 
-- **app/manifest.json** : Fichier de configuration JSON définissant l'application ACAP, sa version, son nom, et la configuration du proxy inverse pour router les requêtes vers le serveur interne.
-- **app/web_server_rev_proxy.c** : Code source principal en C du serveur web utilisant CivetWeb. Implémente les gestionnaires pour les endpoints `/list` (lister les fichiers de comptages dans une plage de dates), `/send` (envoyer les fichiers au serveur backend via HTTP POST), et support WebSocket pour la communication en temps réel.
-- **app/web_server_rev_proxy_mgr.c** : Version alternative du code serveur, similaire au fichier principal mais configuré pour utiliser un socket Unix au lieu d'un port TCP, potentiellement pour une communication interne plus sécurisée.
-- **app/Makefile** : Script de construction pour compiler les programmes C, liant avec les bibliothèques nécessaires comme CivetWeb, cURL, et GLib.
-- **app/html/index.html** : Interface utilisateur web (UI) en HTML/CSS/JavaScript pour interagir avec l'application. Permet de sélectionner des plages de dates, lister les fichiers de comptages, et les envoyer au serveur backend.
-- **Dockerfile** : Script Docker pour construire l'image conteneur Axis, incluant la compilation de CivetWeb et la construction de l'application ACAP.
-- **README.md** : Ce fichier de documentation expliquant l'utilisation du projet.
-
-Pour la documentation officielle, consultez [Axis Developer Portal](https://developer.axis.com/acap/).
-
-## Licence
-
-**[Licence Apache 2.0](../LICENSE)**
+**[Apache License 2.0](../LICENSE)**

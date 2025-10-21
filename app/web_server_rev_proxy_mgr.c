@@ -35,7 +35,7 @@
 #include <curl/curl.h>
 
 #define PORT "2001"
-#define HTTP_TARGET "http://192.168.1.104:3000/api/enregistrements/ingest-batch-from-acap"
+#define HTTP_TARGET "http://192.168.1.45:3000/api/enregistrements/ingest-batch-from-acap"
 
 volatile sig_atomic_t application_running = 1;
 
