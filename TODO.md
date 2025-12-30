@@ -1,0 +1,3 @@
+- [x] Add directory creation code to ensure /tmp/downloads exists
+- [x] Add comments explaining the change for saving downloaded files in tmp subfolder
+- [] recuperer le num de serie sur la cam et non comme var static 

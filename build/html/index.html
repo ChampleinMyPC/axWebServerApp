@@ -1,0 +1,1280 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+  <meta charset="utf-8" />
+  <title>ACAP Export – Fenêtres 15 min</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #0b1220;
+      --card: #0f172a;
+      --surface: #111827;
+      --muted: #94a3b8;
+      --text: #e5e7eb;
+      --primary: #22d3ee;
+      --primary-strong: #06b6d4;
+      --primary-fg: #001018;
+      --ring: #22d3ee44;
+      --border: #1f2937;
+      --chip: #172554;
+      --chip-fg: #93c5fd;
+      --ok: #34d399;
+      --err: #f87171;
+      --shadow: 0 10px 30px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .02);
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      height: 100%
+    }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background:
+        radial-gradient(1200px 500px at 10% -10%, #0ea5e980, transparent 50%),
+        radial-gradient(1000px 500px at 110% 20%, #22d3ee40, transparent 50%),
+        var(--bg);
+      padding: 24px;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+    }
+
+    .shell {
+      width: min(1100px, 96vw);
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 16px;
+    }
+
+    .topbar {
+      background: linear-gradient(180deg, #0b1220, #0c1424 60%, #0b1426);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      letter-spacing: .3px;
+    }
+
+    .badge {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      color: var(--chip-fg);
+      background: var(--chip);
+      border: 1px solid #1e3a8a;
+    }
+
+    .actions {
+      display: flex;
+      align-items: end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    input {
+      background: #0b1220;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      outline: none;
+      box-shadow: inset 0 0 0 1px transparent;
+    }
+
+    /* #start, #end{  color:white; } */
+    input:focus {
+      box-shadow: 0 0 0 3px var(--ring);
+      border-color: var(--primary-strong);
+    }
+
+    .custom-datetime-picker {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .custom-datetime-picker input {
+      background: #0b1220;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      width: 180px;
+      cursor: pointer;
+    }
+
+    .custom-datetime-picker input:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px var(--ring);
+      border-color: var(--primary-strong);
+    }
+
+    .calendar-btn {
+      background: var(--primary);
+      border: none;
+      border-radius: 6px;
+      padding: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-fg);
+      transition: background 0.3s ease;
+    }
+
+    .calendar-btn:hover {
+      background: var(--primary-strong);
+    }
+
+    .calendar-popup {
+      position: absolute;
+      top: 110%;
+      left: 0;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 12px;
+      z-index: 100;
+      display: none;
+      width: 280px;
+      user-select: none;
+    }
+
+    .calendar-popup[aria-hidden="false"] {
+      display: block;
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+
+    .calendar-day {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .calendar-date {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--text);
+      background: transparent;
+      transition: background 0.2s ease;
+    }
+
+    .calendar-date:hover {
+      background: var(--primary);
+      color: var(--primary-fg);
+    }
+
+    .calendar-date.selected {
+      background: var(--primary-strong);
+      color: var(--primary-fg);
+      font-weight: 700;
+    }
+
+    .time-inputs {
+      margin-top: 8px;
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      color: var(--text);
+    }
+
+    .time-inputs input {
+      width: 60px;
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-weight: 700;
+      text-align: center;
+      outline: none;
+    }
+
+    .time-inputs input:focus {
+      border-color: var(--primary-strong);
+      box-shadow: 0 0 0 3px var(--ring);
+    }
+
+    .btn {
+      appearance: none;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+
+    .btn.primary {
+      background: linear-gradient(180deg, var(--primary), var(--primary-strong));
+      color: var(--primary-fg);
+      box-shadow: 0 10px 20px #06b6d455;
+    }
+
+    .btn.ghost {
+      background: #0b1220;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    .main {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: linear-gradient(180deg, #0d1629, #0f172a);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .side {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .side .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .side .title {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .cam {
+      font-weight: 800;
+      letter-spacing: .2px;
+    }
+
+    .content {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .content h2 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: .2px;
+    }
+
+    .chipline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .chip {
+      background: #00111a;
+      color: #67e8f9;
+      border: 1px solid #0e7490;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 640px) {
+      .summary {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .info {
+      background: #0b1220;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .info h4 {
+      margin: 0 0 6px;
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+
+    .info small {
+      color: var(--muted);
+      display: block;
+    }
+
+    .truncate {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .files {
+      border: 1px dashed #223047;
+      background: #0b1220;
+      border-radius: 12px;
+      padding: 8px;
+      max-height: 52vh;
+      overflow: auto;
+    }
+
+    .file {
+      padding: 9px 10px;
+      border-bottom: 1px dashed #1e293b;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      color: #cbd5e1;
+      display: flex;
+      gap: 10px;
+    }
+
+    .file:last-child {
+      border-bottom: none;
+    }
+
+    .status {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: right;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-weight: 800;
+      margin-left: 6px;
+    }
+
+    .pill.ok {
+      background: #022c22;
+      color: var(--ok);
+      border: 1px solid #064e3b;
+    }
+
+    .pill.err {
+      background: #2f0b0b;
+      color: var(--err);
+      border: 1px solid #7f1d1d;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 7, 18, .7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+
+    .modal {
+      width: min(420px, calc(100vw - 32px));
+      background: linear-gradient(180deg, #0b1220, #0f172a);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .modal h3 {
+      margin: 0 0 6px;
+      text-align: center;
+    }
+
+    .modal .hint {
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .modal .row {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .modal .actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 12px;
+    }
+
+    .error {
+      color: var(--err);
+    }
+
+    .sr-only {
+      position: absolute;
+      left: -9999px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 3l7.794 4.5v9L12 21 4.206 16.5v-9L12 3z" stroke="#67e8f9" stroke-width="1.2" />
+          <path d="M12 7l4 2.3v4.4L12 16l-4-2.3V9.3L12 7z" fill="#22d3ee" />
+        </svg>
+        ACAP Export
+        <span class="badge">Fenêtres 15 min</span>
+      </div>
+      <div class="actions">
+        <div class="field">
+          <label for="start">Début (UTC)</label>
+          <div class="custom-datetime-picker" id="start-picker">
+            <input id="start" type="text" readonly required />
+            <button type="button" class="calendar-btn" aria-label="Select start date">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+            </button>
+            <div class="calendar-popup" id="start-calendar" tabindex="-1" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="field">
+          <label for="end">Fin (UTC)</label>
+          <div class="custom-datetime-picker" id="end-picker">
+            <input id="end" type="text" readonly required />
+            <button type="button" class="calendar-btn" aria-label="Select end date">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+            </button>
+            <div class="calendar-popup" id="end-calendar" tabindex="-1" aria-hidden="true"></div>
+          </div>
+        </div>
+        <button id="btnList" class="btn primary">Lister</button>
+        <button id="btnSend" class="btn ghost">Envoyer au serveur</button>
+      </div>
+    </header>
+
+    <section class="main">
+      <aside class="card side">
+        <div class="row">
+          <div>
+            <div class="title">Caméra</div>
+            <div class="cam" id="camDisplay">(non configurée)</div>
+          </div>
+          <button id="btnEditCam" class="btn ghost" title="Changer URL/IP caméra">Changer</button>
+        </div>
+        <div class="row" style="justify-content:flex-start; gap:8px;">
+          <span class="title">Jour courant</span>
+          <span id="today" class="badge" style="border-color:#0e7490; background:#00111a; color:#67e8f9"></span>
+        </div>
+        <div>
+          <button id="btnUpdate" class="btn ghost">Mettre à jour les ACAP</button>
+        </div>
+      </aside>
+
+      <div class="card content">
+        <h2>Fichiers trouvés</h2>
+        <div class="chipline">Plage sélectionnée <span class="chip" id="chipRange">UTC</span></div>
+
+        <div class="summary" id="summary">
+          <div class="info">
+            <h4>Premier fichier</h4>
+            <small id="firstTs">—</small>
+            <!-- <span id="firstPath" class="truncate">—</span> -->
+            <small id="firstSize">—</small>
+            <small id="firstMinDeb">Min début: —</small>
+            <small id="firstMinFin">Min fin: —</small>
+            <small id="firstHHMMDeb">Début HH:MM: —</small>
+            <small id="firstHHMMFin">Fin HH:MM: —</small>
+          </div>
+          <div class="info">
+            <h4>Dernier fichier</h4>
+            <small id="lastTs">—</small>
+            <!-- <span id="lastPath" class="truncate">—</span> -->
+            <small id="lastSize">—</small>
+            <small id="lastMinDeb">Min début: —</small>
+            <small id="lastMinFin">Min fin: —</small>
+            <small id="lastHHMMDeb">Début HH:MM: —</small>
+            <small id="lastHHMMFin">Fin HH:MM: —</small>
+          </div>
+        </div>
+
+        <div class="files" id="files"></div>
+        <div class="status" id="status"></div>
+      </div>
+    </section>
+  </div>
+
+  <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal" role="document" aria-labelledby="modalTitle">
+      <h3 id="modalTitle">Configurer l’URL/IP de la caméra</h3>
+      <p id="camMsg" class="hint">Exemples : <code>http://192.168.1.51</code> 
+      </p>
+      <div class="row">
+        <label class="sr-only" for="cameraBase">URL/IP caméra</label>
+        <input id="cameraBase" type="text" placeholder="http://192.168.x.x" style="flex:1" />
+      </div>
+      <div class="actions">
+        <button id="cancelCam" class="btn ghost">Annuler</button>
+        <button id="saveCam" class="btn primary">Utiliser</button>
+      </div>
+    </div>
+  </div>
+
+  
+
+  <script>
+    /************************************************************************
+     * Réorganisation : centralise la logique de détection d'IP / base API
+     * - Prise d'IP depuis :
+     *    1) valeur fournie (localStorage / champ modal)
+     *    2) location.origin (si applicable)
+     *    3) lecture de /axis-cgi/param.cgi?action=list&group=Network.eth0
+     *
+     * Commentaires en français comme demandé.
+     * Liens docs :
+     * - URL API MDN: https://developer.mozilla.org/en-US/docs/Web/API/URL
+     * - fetch:      https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
+     ************************************************************************/
+
+    const q = (s) => document.querySelector(s);
+
+    /* ---------- utilitaires ---------- */
+
+    // Normalise et valide une base caméra (retourne { ok, url, msg })
+    // Utilise l'API URL (voir MDN) pour parser proprement.
+// Valide une base caméra de type http(s)://192.168.x.y:PORT
+// - Exige une IPv4 privée 192.168.x.y (0-255)
+// - Refuse 127.* / localhost / noms DNS
+// - Exige un port explicite
+// Docs: URL https://developer.mozilla.org/en-US/docs/Web/API/URL
+function normalizeAndValidateCameraBase(input) {
+  let val = (input || '').trim();
+  if (!val) return { ok: false, msg: 'URL/IP requise (ex: http://192.168.1.51:2001).' };
+
+  if (!/^https?:\/\//i.test(val)) val = 'http://' + val;
+
+  try {
+    const u = new URL(val); // peut throw
+    const host = u.hostname;
+    const port = "2001";
+
+    // 1) Port obligatoire
+    if (!port) return { ok: false, msg: 'Port manquant. Exemple: http://192.168.1.51:2001' };
+
+    // 2) IPv4 192.168.x.y stricte & octets 0-255
+    //    (Refuse 127.*, localhost et les DNS)
+    const m = host.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+    if (!m) return { ok: false, msg: 'Seules les IPs 192.168.x.y sont acceptées (pas de DNS).' };
+
+    const [a, b, c, d] = m.slice(1).map(Number);
+    const inRange = (n) => n >= 0 && n <= 255;
+    if (!inRange(a) || !inRange(b) || !inRange(c) || !inRange(d))
+      return { ok: false, msg: 'Octet IP hors plage 0–255.' };
+
+    if (a !== 192 || b !== 168)
+      return { ok: false, msg: 'IP hors LAN (doit être 192.168.x.y).' };
+
+    if (a === 127) // redondant ici mais garde l’intention
+      return { ok: false, msg: '127.x.x.x interdit (live server, loopback).' };
+
+    // On ne garde que l'origine stricte (scheme + ip + port)
+    return { ok: true, url: `${u.protocol}//${u.hostname}:${u.port}` };
+  } catch {
+    return { ok: false, msg: 'URL invalide. Exemple: http://192.168.1.51:2001' };
+  }
+}
+
+
+    // Construit la base API (force port 2001 si aucun port présent)
+    function buildApiBase(baseUrl) {
+      try {
+        const u = new URL(baseUrl);
+        // si aucun port fourni -> forcer :2001
+        if (!u.port) u.port = '2001';
+        return u.origin.replace(/\/$/, '');
+      } catch (e) {
+        return null;
+      }
+    }
+
+    // stockage local
+    const loadCameraBase = () => localStorage.getItem('cameraBase') || '';
+    const saveCameraBase = (url) => localStorage.setItem('cameraBase', url);
+
+    // détecte une valeur par défaut depuis location (utile quand l'UI est servie depuis la caméra)
+    function detectDefaultCameraBase() {
+      if (location.hostname && location.protocol.startsWith('http')) return location.origin;
+      return '';
+    }
+
+    /* ---------- lecture des params réseau (Axis) ---------- */
+
+    // Tente de récupérer l'IP depuis l'endpoint Axis param.cgi
+    // Retourne string IP ou null.
+    // NOTE: endpoint utilisé : /axis-cgi/param.cgi?action=list&group=Network.eth0
+    async function getIpFromNetworkParams() {
+      try {
+        const res = await fetch('/axis-cgi/param.cgi?action=list&group=Network.eth0', { method: 'GET' });
+        if (!res.ok) {
+          console.warn('getIpFromNetworkParams: HTTP', res.status);
+          return null;
+        }
+        const text = await res.text();
+        // On cherche la ligne root.Network.eth0.IPAddress=...
+        const lines = text.split(/\r?\n/);
+        for (const line of lines) {
+          const m = line.match(/^root\.Network\.eth0\.IPAddress=(.+)$/);
+          if (m) return m[1].trim();
+        }
+        return null;
+      } catch (err) {
+        console.warn('getIpFromNetworkParams error', err);
+        return null;
+      }
+    }
+
+    /* ---------- fonction centrale : resolveCameraApiBase ----------
+       Renvoie l'API base à utiliser ou null.
+       Ordre :
+         1) localStorage (si valide)
+         2) location.origin (si valide)
+         3) lecture params réseau
+         4) null -> ouvre modal côté appelant
+    */
+    async function resolveCameraApiBase(allowModalFallback = true) {
+      // 1) stocké
+      let stored = loadCameraBase();
+      if (stored) {
+        const check = normalizeAndValidateCameraBase(stored);
+        if (check.ok) {
+          const api = buildApiBase(check.url);
+          console.log(api);
+          if (api) return api;
+        }
+      }
+      
+      // 2) try détecter depuis la page (host qui sert l'UI)
+      const auto = detectDefaultCameraBase();
+      if (auto) {
+        const check = normalizeAndValidateCameraBase(auto);
+        if (check.ok) {
+          saveCameraBase(check.url);
+          const api = buildApiBase(check.url);
+          console.log(api);
+          if (api) return api;
+        }
+      }
+      
+      // 3) tenter la lecture des params réseau (peut échouer si la page n'est pas proxyée)
+      const ip = await getIpFromNetworkParams();
+      if (ip) {
+        // ip peut être "192.168.x.x" ou "10.x.x.x"
+        const candidate = 'http://' + ip;
+        const check = normalizeAndValidateCameraBase(candidate);
+        if (check.ok) {
+          saveCameraBase(check.url);
+          const api = buildApiBase(check.url);
+          console.log(api);
+          if (api) return api;
+        }
+      }
+
+      // 4) fallback : si autorisé, renvoyer null pour que l'appelant ouvre la modal
+      if (allowModalFallback) return null;
+      return null;
+    }
+    // on appelle resolveCameraApiBase() 
+    (async () => {
+      const api = await resolveCameraApiBase(false);
+      if (!api) {
+        // pas d'IP détectée -> ouvrir modal
+        openModal(loadCameraBase() || '');
+        setStatus("IP caméra non configurée — saisissez l'IP.", 0, 0);
+      } else {
+        setStatus("IP caméra détectée automatiquement.");
+      }
+      updateCamDisplay();
+    })();
+    /* ---------- UI helpers ---------- */
+    function updateCamDisplay() {
+      // Affiche l'IP/hôte utilisée (ou non configurée)
+      const raw = loadCameraBase();
+      const check = normalizeAndValidateCameraBase(raw);
+      const api = check.ok ? buildApiBase(check.url) : '';
+      let display = '(non configurée)';
+      if (api) {
+        console.log(api);
+        try { display = new URL(api).hostname; }
+        catch { display = api; }
+      }
+      q('#camDisplay').textContent = display;
+    }
+
+    function openModal(prefill = '') { q('#cameraBase').value = prefill; q('#modalBackdrop').style.display = 'flex'; setTimeout(() => q('#cameraBase').focus(), 50); }
+    function closeModal() { q('#modalBackdrop').style.display = 'none'; }
+
+    function setStatus(text, sent = undefined, failed = undefined) {
+      const el = q('#status');
+      if (sent === undefined && failed === undefined) { el.textContent = text; return; }
+      el.innerHTML = `${text} <span class="pill ok">Envoyés: ${sent || 0}</span><span class="pill err">Échecs: ${failed || 0}</span>`;
+    }
+    function showError(msg) { q('#status').innerHTML = `<span class="pill err">${msg}</span>`; }
+
+    /* ---------- fonctions existantes pour list/send (réutilisées) ---------- */
+    // (je conserve tes fonctions parseFlexibleTs, extractTimesFromPath, normalizeEntry, renderSummary, etc.)
+    // Pour gagner de la place dans la réponse, je n'ai pas réécrit ici ces utilitaires ; réutilise exactement ceux que tu as.
+    // Cependant, ci-dessous j'inclus listFiles/sendFiles qui utilisent resolveCameraApiBase().
+
+    let lastListed = [];
+
+    // parseFlexibleTs, extractTimesFromPath, normalizeEntry, pad2, hhmmUTC, renderSummary, clearSummary
+    // -> collées ici depuis ton fichier original (ne pas oublier de les inclure en prod)
+    function parseFlexibleTs(ts) {
+      if (!ts) return null;
+      const m = ts.match(/^(\d{8})T(\d{2})(\d{2})(\d{2})?Z$/);
+      if (!m) return null;
+      const [_, ymd, HH, MM, SS] = m;
+      const y = ymd.slice(0, 4), mo = ymd.slice(4, 6), d = ymd.slice(6, 8);
+      const ss = SS || '00';
+      const iso = `${y}-${mo}-${d}T${HH}:${MM}:${ss}Z`;
+      const dt = new Date(iso);
+      return isNaN(dt.getTime()) ? null : dt;
+    }
+    function extractTimesFromPath(path) {
+      if (!path) return {};
+      const re = /(\d{8}T\d{4}(?:\d{2})?Z)/g;
+      const found = [];
+      let m;
+      while ((m = re.exec(path)) !== null) { found.push(m[1]); }
+      if (!found.length) return {};
+      const startStr = found[0] || '';
+      const endStr = found[found.length - 1] || '';
+      const startDate = parseFlexibleTs(startStr);
+      const endDate = parseFlexibleTs(endStr);
+      const startMinute = startDate ? startDate.getUTCMinutes() : undefined;
+      const endMinute = endDate ? endDate.getUTCMinutes() : undefined;
+      return { startStr, endStr, startDate, endDate, startMinute, endMinute };
+    }
+    function normalizeEntry(e) {
+      if (typeof e === 'string') {
+        const parts = e.split('|').map(s => s.trim());
+        const tsStr = parts[0] || '';
+        const path = parts[1] || '';
+        const sizeStr = parts[2] || '';
+        const size = parseInt(sizeStr, 10) || (parseInt((sizeStr.match(/\d+/) || ['0'])[0], 10) || 0);
+        const timeMeta = extractTimesFromPath(path);
+        return { ts: tsStr, path, size, tsDate: parseFlexibleTs(tsStr.replace(/_+$/, '')), ...timeMeta };
+      }
+      const tsStr = e.ts || '';
+      const path = e.path || '';
+      const size = Number(e.size) || 0;
+      const timeMeta = extractTimesFromPath(path);
+      return { ts: tsStr, path, size, tsDate: parseFlexibleTs(tsStr.replace(/_+$/, '')), ...timeMeta };
+    }
+    function pad2(n) { return String(n ?? '').padStart(2, '0'); }
+    function hhmmUTC(d) { if (!d) return null; return pad2(d.getUTCHours()) + ':' + pad2(d.getUTCMinutes()); }
+
+    function renderSummary(items) {
+      const first = items.reduce((a, b) => {
+        if (!a) return b; if (!a.tsDate) return b; if (!b.tsDate) return a; return a.tsDate <= b.tsDate ? a : b;
+      }, null);
+      const last = items.reduce((a, b) => {
+        if (!a) return b; if (!a.tsDate) return b; if (!b.tsDate) return a; return a.tsDate >= b.tsDate ? a : b;
+      }, null);
+      const fmt = (d) => d && d.tsDate ? d.tsDate.toISOString().replace(':00.000', '').replace('.000', '') : '—';
+
+      q('#firstTs').textContent = first ? (first.ts || fmt(first)) : '—';
+      q('#firstSize').textContent = first ? `${first.size} bytes` : '—';
+      q('#firstMinDeb').textContent = 'Min début: ' + (first && typeof first.startMinute === 'number' ? pad2(first.startMinute) : '—');
+      q('#firstHHMMDeb').textContent = 'Début HH:MM: ' + (first && first.startDate ? hhmmUTC(first.startDate) : '—');
+      q('#firstMinFin').textContent = 'Min fin: ' + (first && typeof first.endMinute === 'number' ? pad2(first.endMinute) : '—');
+      q('#firstHHMMFin').textContent = 'Fin HH:MM: ' + (first && first.endDate ? hhmmUTC(first.endDate) : '—');
+
+      q('#lastTs').textContent = last ? (last.ts || fmt(last)) : '—';
+      q('#lastSize').textContent = last ? `${last.size} bytes` : '—';
+      q('#lastMinDeb').textContent = 'Min début: ' + (last && typeof last.startMinute === 'number' ? pad2(last.startMinute) : '—');
+      q('#lastHHMMDeb').textContent = 'Début HH:MM: ' + (last && last.startDate ? hhmmUTC(last.startDate) : '—');
+      q('#lastMinFin').textContent = 'Min fin: ' + (last && typeof last.endMinute === 'number' ? pad2(last.endMinute) : '—');
+      q('#lastHHMMFin').textContent = 'Fin HH:MM: ' + (last && last.endDate ? hhmmUTC(last.endDate) : '—');
+    }
+
+    function clearSummary() {
+      const defaults = {
+        firstTs: '—', firstSize: '—', firstMinDeb: 'Min début: —', firstHHMMDeb: 'Début HH:MM: —', firstMinFin: 'Min fin: —', firstHHMMFin: 'Fin HH:MM: —',
+        lastTs: '—', lastSize: '—', lastMinDeb: 'Min début: —', lastHHMMDeb: 'Début HH:MM: —', lastMinFin: 'Min fin: —', lastHHMMFin: 'Fin HH:MM: —'
+      };
+      Object.entries(defaults).forEach(([id, val]) => { q('#' + id).textContent = val; });
+    }
+
+    /* ---------- listFiles / sendFiles qui utilisent resolveCameraApiBase ---------- */
+
+    async function listFiles() {
+      q('#chipRange').textContent = q('#start').value + ' → ' + q('#end').value;
+
+      setStatus("Listing en cours…"); q('#files').innerHTML = ""; lastListed = []; clearSummary();
+
+      const startRaw = q('#start').value;
+      const endRaw = q('#end').value;
+
+      if (!startRaw || !endRaw) { showError("Veuillez renseigner les deux dates (début et fin)."); return; }
+
+      const sMs = Date.parse(startRaw + 'Z');
+      const eMs = Date.parse(endRaw + 'Z');
+      if (Number.isNaN(sMs) || Number.isNaN(eMs)) { showError("Format de date invalide."); return; }
+      if (sMs >= eMs) { showError("La date de début doit être strictement antérieure à la date de fin."); return; }
+
+      // Résoudre base API, si null -> ouvrir modal pour saisie
+      let apiBase = await resolveCameraApiBase(true);
+      if (!apiBase) { setStatus("IP caméra non configurée — saisissez l'IP."); openModal(loadCameraBase()); return; }
+
+      try {
+        const start = (startRaw.length === 16 ? startRaw + ':00Z' : startRaw);
+        const end = (endRaw.length === 16 ? endRaw + ':00Z' : endRaw);
+
+        const res = await fetch(`${apiBase}/list?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`, { method: 'GET', headers: { 'Accept': 'application/json' } });
+        if (!res.ok) { setStatus(`Erreur list: HTTP ${res.status}`); return; }
+
+        const data = await res.json();
+        const raw = Array.isArray(data.files) ? data.files : [];
+        const normalized = raw.map(normalizeEntry);
+        // Tri par date croissante (du plus ancien au plus récent)
+        normalized.sort((a, b) => {
+          const da = a.tsDate ? a.tsDate.getTime() : 0;
+          const db = b.tsDate ? b.tsDate.getTime() : 0;
+          return da - db ; // croissant
+        });
+        lastListed = normalized;
+        if (!normalized.length) { setStatus("Aucun fichier sur cette période."); return; }
+
+        const box = q('#files');
+        normalized.forEach(f => {
+          const div = document.createElement('div'); div.className = 'file';
+          const left = f.ts || (f.tsDate ? f.tsDate.toISOString().replace(/[-:]/g, '').slice(0, 13) + 'Z_' : '');
+          div.textContent = `${left}  |  ${f.path}  |  ${f.size} bytes`;
+          box.appendChild(div);
+        });
+
+        renderSummary(normalized);
+        setStatus(`${normalized.length} fichier(s) trouvés.`);
+      } catch (e) {
+        showError("Erreur réseau lors de la liste des fichiers: " + e.message);
+      }
+    }
+
+    async function sendFiles() {
+      if (!lastListed.length) { setStatus("Rien à envoyer. Cliquez d’abord sur Lister."); return; }
+      let apiBase = await resolveCameraApiBase(true);
+      if (!apiBase) { setStatus("IP caméra non configurée — saisissez l'IP."); openModal(loadCameraBase()); return; }
+
+      try {
+        setStatus("Envoi en cours…");
+        const body = JSON.stringify({ files: lastListed.map(f => f.path) });
+        const res = await fetch(`${apiBase}/send`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body });
+        if (!res.ok) { setStatus(`Erreur send: HTTP ${res.status}`); return; }
+
+        const data = await res.json();
+        setStatus("Terminé.", data.sent ?? 0, data.failed ?? 0);
+      } catch (e) {
+        showError("Erreur réseau lors de l'envoi des fichiers: " + e.message);
+      }
+    }
+
+    /* ---------- probe / update ACAP (GET /update) ---------- */
+    async function probeCameraUpdate() {
+      setStatus("Vérification de la caméra…");
+      let apiBase = await resolveCameraApiBase(true);
+      if (!apiBase) { setStatus("IP caméra non configurée — saisissez l'IP."); openModal(loadCameraBase()); return { ok: false }; }
+
+      const updateUrl = apiBase + '/update';
+      const controller = new AbortController();
+      const to = setTimeout(() => controller.abort(), 130000);
+
+      try {
+        const res = await fetch(updateUrl, { method: 'GET', headers: { 'Accept': 'application/json' }, signal: controller.signal });
+        clearTimeout(to);
+        if (res.ok) {
+          let body;
+          try { body = await res.json(); } catch { body = await res.text(); }
+          setStatus(`Réponse /update OK (${res.status})`);
+          const short = (typeof body === 'string') ? body.slice(0, 400) : JSON.stringify(body).slice(0, 400);
+          q('#status').innerHTML += `<div style="margin-top:6px; font-family:monospace; font-size:12px; color:var(--muted)">${short}</div>`;
+          return { ok: true, status: res.status, body };
+        } else {
+          const txt = await res.text().catch(() => `HTTP ${res.status}`);
+          showError(`Camera /update: HTTP ${res.status}`);
+          if (res.status === 404 || res.status === 0 || res.status === 502) openModal(loadCameraBase());
+          return { ok: false, status: res.status, body: txt };
+        }
+      } catch (err) {
+        clearTimeout(to);
+        if (err.name === 'AbortError') showError("Requête timeout vers la caméra (5s).");
+        else showError("Erreur réseau lors de la requête vers la caméra.");
+        openModal(loadCameraBase());
+        return { ok: false, error: err.message || err };
+      }
+    }
+
+    /* ---------- events / initialisation ---------- */
+
+    q('#cancelCam').addEventListener('click', () => closeModal());
+    q('#saveCam').addEventListener('click', () => {
+      const { ok, url, msg } = normalizeAndValidateCameraBase(q('#cameraBase').value);
+      if (!ok) { q('#camMsg').textContent = msg; q('#camMsg').className = 'hint error'; return; }
+      saveCameraBase(url); closeModal(); updateCamDisplay();
+      q('#status').textContent = `Caméra configurée: ${buildApiBase(url)}`;
+    });
+    q('#btnEditCam').addEventListener('click', () => { openModal(loadCameraBase()); });
+
+    q('#btnList').addEventListener('click', listFiles );
+    q('#btnSend').addEventListener('click', sendFiles);
+
+    const btnUpdate = q('#btnUpdate');
+    if (btnUpdate) {
+      btnUpdate.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        btnUpdate.disabled = true;
+        btnUpdate.textContent = 'Vérification…';
+        try { await probeCameraUpdate(); } finally { btnUpdate.disabled = false; btnUpdate.textContent = 'Mettre à jour les ACAP'; }
+      });
+    }
+
+    // Init UI (dates, camDisplay)
+    (function initDefaults() {
+      const now = new Date();
+      const pad = (n) => String(n).padStart(2, '0');
+      const toUtcLocalStr = (d) => d.getUTCFullYear() + "-" + pad(d.getUTCMonth() + 1) + "-" + pad(d.getUTCDate()) + " " + pad(d.getUTCHours()) + ":" + pad(d.getUTCMinutes());
+      const d0 = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0));
+      const d1 = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), 0));
+      q('#start').value = toUtcLocalStr(d0);
+      q('#end').value = toUtcLocalStr(d1);
+      q('#today').innerText = "UTC " + d0.toISOString().slice(0, 10);
+      q('#chipRange').textContent = q('#start').value + ' → ' + q('#end').value ;
+      console.log(q('#start').value + ' → ' + q('#end').value);
+      console.log(q('#chipRange').textContent);
+
+
+      const auto = detectDefaultCameraBase();
+      const stored = loadCameraBase();
+      const candidate = stored || auto; const check = candidate ? normalizeAndValidateCameraBase(candidate) : { ok: false };
+      if (check.ok) saveCameraBase(check.url);
+      q('#btnEditCam').disabled = false;
+      updateCamDisplay();
+    })();
+    
+    // Mini datepicker custom pour <div class="calendar-popup">…</div>
+// - Remplit l'input au format "YYYY-MM-DD HH:MM" en UTC (ex.: 2025-10-08 13:15)
+// - Boutons ◀ ▶ pour mois, grille jours, inputs HH/MM
+// Docs utiles :
+//  - Intl.DateTimeFormat: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat
+//  - Date: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
+
+    function createCalendar(container, input) {
+      const $ = (sel, root = container) => root.querySelector(sel);
+
+      const state = {
+        open: false,
+        // Par défaut, date UTC “maintenant” (minutes arrondies à 0)
+        date: new Date(Date.UTC(
+          new Date().getUTCFullYear(),
+          new Date().getUTCMonth(),
+          new Date().getUTCDate(),
+          new Date().getUTCHours(),
+          0, 0, 0
+        )),
+      };
+
+      const fmtMonth = new Intl.DateTimeFormat('fr', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+
+      function toYmdHmUTC(d) {
+        const p2 = (n) => String(n).padStart(2, '0');
+        return `${d.getUTCFullYear()}-${p2(d.getUTCMonth()+1)}-${p2(d.getUTCDate())} ${p2(d.getUTCHours())}:${p2(d.getUTCMinutes())}`;
+      }
+
+      function fromPartsUTC(y, m /*0-11*/, d, hh, mm) {
+        return new Date(Date.UTC(y, m, d, hh, mm, 0, 0));
+      }
+
+      function daysInMonthUTC(y, m0) {
+        return new Date(Date.UTC(y, m0 + 1, 0)).getUTCDate();
+      }
+
+      function render() {
+        container.setAttribute('aria-hidden', state.open ? 'false' : 'true');
+        if (!state.open) return;
+
+        const y = state.date.getUTCFullYear();
+        const m0 = state.date.getUTCMonth();
+        const d = state.date.getUTCDate();
+        const hh = state.date.getUTCHours();
+        const mm = state.date.getUTCMinutes();
+
+        // 1) squelette
+        container.innerHTML = `
+          <div class="calendar-header">
+            <button type="button" class="nav prev" aria-label="Mois précédent">◀</button>
+            <div class="title">${fmtMonth.format(state.date)}</div>
+            <button type="button" class="nav next" aria-label="Mois suivant">▶</button>
+          </div>
+          <div class="calendar-grid">
+            ${['L','M','M','J','V','S','D'].map(w=>`<div class="calendar-day">${w}</div>`).join('')}
+          </div>
+          <div class="calendar-grid dates"></div>
+          <div class="time-inputs">
+            <input type="number" class="hh" min="0" max="23" value="${String(hh).padStart(2,'0')}" aria-label="Heure (UTC)" />
+            <input type="number" class="mm" min="0" max="59" value="${String(mm).padStart(2,'0')}" aria-label="Minutes (UTC)" />
+            <button type="button" class="ok btn ghost" style="padding:6px 10px">OK</button>
+          </div>
+        `;
+
+        // 2) grille des dates (UTC)
+        const datesGrid = $('.dates');
+        const firstOfMonth = new Date(Date.UTC(y, m0, 1));
+        // Lundi=1 … Dimanche=7 (on veut commencer la grille au lundi)
+        const w = firstOfMonth.getUTCDay() || 7;
+        const lead = w - 1; // nb de cases vides avant le 1er
+        const dim = daysInMonthUTC(y, m0);
+
+        // Cases vides
+        for (let i=0; i<lead; i++) {
+          const ph = document.createElement('div');
+          ph.className = 'calendar-date';
+          ph.style.visibility = 'hidden';
+          datesGrid.appendChild(ph);
+        }
+        // Jours
+        for (let day=1; day<=dim; day++) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'calendar-date' + (day===d ? ' selected' : '');
+          btn.textContent = String(day);
+          btn.addEventListener('click', () => {
+            // met à jour la date (garde HH/MM)
+            const newDate = fromPartsUTC(y, m0, day, parseInt($('.hh').value||'0',10), parseInt($('.mm').value||'0',10));
+            state.date = newDate;
+            // met à jour l'input et ferme
+            input.value = toYmdHmUTC(state.date);
+            hide();
+          });
+          datesGrid.appendChild(btn);
+        }
+
+        // 3) nav mois
+        $('.prev').addEventListener('click', (e) => {
+          e.stopPropagation();
+          const nd = fromPartsUTC(y, m0-1, Math.min(d, daysInMonthUTC(y, m0-1)), hh, mm);
+          state.date = nd;
+          input.value = toYmdHmUTC(state.date);
+          render();
+        });
+        $('.next').addEventListener('click', (e) => {
+          e.stopPropagation();
+          const nd = fromPartsUTC(y, m0+1, Math.min(d, daysInMonthUTC(y, m0+1)), hh, mm);
+          state.date = nd;
+          input.value = toYmdHmUTC(state.date);
+          render();
+        });
+
+        // 4) heures / minutes
+        $('.hh').addEventListener('input', (e) => {
+          let v = Math.max(0, Math.min(23, parseInt(e.target.value||'0',10)));
+          e.target.value = String(v).padStart(2,'0');
+          state.date = fromPartsUTC(y, m0, d, v, mm);
+          input.value = toYmdHmUTC(state.date);
+          // console.log('change hh');
+          // console.log(input.value);
+          
+        });
+        $('.mm').addEventListener('input', (e) => {
+          let v = Math.max(0, Math.min(59, parseInt(e.target.value||'0',10)));
+          e.target.value = String(v).padStart(2,'0');
+          state.date = fromPartsUTC(y, m0, d, hh, v);
+          input.value = toYmdHmUTC(state.date);
+        });
+
+        // 5) bouton OK
+        $('.ok').addEventListener('click', () => { input.value = toYmdHmUTC(state.date); hide(); });
+      }
+
+      function toggle() { state.open = !state.open; render(); }
+      function hide()   { state.open = false; render(); }
+      function setDate(d) {
+        // Accepte Date locale/UTC ; on copie ses composantes UTC
+        state.date = fromPartsUTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), d.getUTCHours(), d.getUTCMinutes());
+        // Synchronise l'input
+        input.value = toYmdHmUTC(state.date);
+        if (state.open) render();
+      }
+
+      // init fermé
+      hide();
+      return { toggle, hide, setDate };
+    }
+    // Parse "YYYY-MM-DD HH:MM" comme UTC → Date
+    // MDN Date.UTC: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/UTC
+    function parseYmdHmUTC(str) {
+      const m = String(str || '').match(/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})$/);
+      if (!m) return null;
+      const [, Y, M, D, h, mn] = m.map(Number);
+      return new Date(Date.UTC(Y, M - 1, D, h, mn, 0, 0));
+    }
+    function updateChipRange() {
+      const s = q('#start').value || '—';
+      const e = q('#end').value || '—';
+      // Rester explicite : UTC
+      q('#chipRange').textContent = `${s} → ${e} UTC`;
+    }
+
+    function setupCustomDatePicker(pickerId, inputId, calendarId) {
+      const picker = document.getElementById(pickerId);
+      const input = document.getElementById(inputId);
+      const calendar = document.getElementById(calendarId);
+
+      const calendarObj = createCalendar(calendar, input);
+
+      // Initialize with current input value or default
+      // Init avec la valeur actuelle (UTC) ou maintenant (UTC)
+      if (input.value) {
+        const d = parseYmdHmUTC(input.value);
+        calendarObj.setDate(d || new Date());
+      } else {
+        calendarObj.setDate(new Date());
+      }
+
+      // Quand l'input change (ex: modifié au clavier), rester en UTC
+      input.addEventListener('change', () => {
+        if (input.value) {
+          const d = parseYmdHmUTC(input.value);
+          if (d) calendarObj.setDate(d);
+          updateChipRange(); // <— voir B
+        }
+      });
+
+      // Toggle calendar popup on button click
+      picker.querySelector('.calendar-btn').addEventListener('click', () => {
+        calendarObj.toggle();
+      });
+
+      // Hide calendar when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!picker.contains(e.target)) {
+          calendarObj.hide();
+        }
+      });
+
+      // Update calendar if input value changes externally
+      input.addEventListener('change', () => {
+        if (input.value) {
+          calendarObj.setDate(new Date(input.value));
+        }
+      });
+    }
+
+    // Setup custom date pickers for start and end
+    setupCustomDatePicker('start-picker', 'start', 'start-calendar');
+    setupCustomDatePicker('end-picker', 'end', 'end-calendar');
+
+    // Update chipRange when inputs change
+    q('#start').addEventListener('change', () => {
+      q('#chipRange').textContent = q('#start').value + ' → ' + q('#end').value;
+      console.log(q('#start').value + ' → ' + q('#end').value);
+      console.log('change start');
+    });
+    q('#end').addEventListener('change', () => {
+      q('#chipRange').textContent = q('#start').value + ' → ' + q('#end').value;
+    });
+    /* NOTE:
+       - J'ai centralisé la résolution de la base API dans resolveCameraApiBase()
+       - getIpFromNetworkParams() est asynchrone et renvoie null si elle ne peut pas lire /axis-cgi
+       - normalizeAndValidateCameraBase() utilise l'objet URL (MDN)
+       - Si tu veux un comportement encore plus strict (ex: forcer lecture des params réseau), change l'ordre dans resolveCameraApiBase()
+    */
+
+  </script>
+</body>
+
+</html>

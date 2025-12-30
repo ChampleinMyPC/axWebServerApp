@@ -1,0 +1,22 @@
+{
+	"schemaVersion": "1.8.0",
+	"acapPackageConf": {
+		"setup": {
+			"appName": "web_server_rev_proxy_dev",
+			"vendor": "MyPC Communications",
+			"embeddedSdkVersion": "3.0",
+			"runMode": "respawn",
+			"version": "1.11.0"
+		},
+		"configuration": {
+			"settingPage": "index.html",
+			"reverseProxy": [
+				{
+					"apiPath": "my_web_server",
+					"target": "http://127.0.0.1:2001",
+					"access": "admin"
+				}
+			]
+		}
+	}
+}

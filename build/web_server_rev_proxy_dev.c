@@ -45,8 +45,8 @@
 #define AUTH0_AUDIENCE "https://api.mycarcounter.fr"
 #define AUTH0_GRANT_TYPE "client_credentials"
 
-#define USER "carflow"
-#define PASS "C@r76240"
+#define USER "champlein"
+#define PASS "696969"
 #define APP_ID "web_server_rev_proxy"
 
 // petit buffer mémoire pour récupérer les réponses HTTP
@@ -185,7 +185,7 @@ static void stop_application(int status)
 // }
 
 // Adapter avec tes globals existants
-static char g_sd_root[256] = "/var/spool/storage/areas/SD_DISK/axstorage_test_file";
+static char g_sd_root[256] = "/var/spool/storage/areas/SD_DISK/axstorage";
 static char g_serial[64] = "B8A44F46CE99"; // rempli au boot via VAPIX (get serial)
 
 // --- utils: parse YYYY-MM-DD from ISO "YYYY-MM-DDTHH:MM:SSZ"

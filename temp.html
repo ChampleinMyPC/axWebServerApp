@@ -1,0 +1,24 @@
+curl --request GET \
+  --url http://192.168.1.45:3000/ \
+  --header 'authorization: Bearer YOUR_ACCESS_TOKEN'
+
+
+  curl --request POST \
+  --url 'https://dev-6xrnn215zh26wxwo.us.auth0.com/oauth/token' \
+  --header 'content-type: application/x-www-form-urlencoded' \
+  --data grant_type=client_credentials \
+  --data 'client_id=T6Hg9wa9XJzS2nqJrzdpXpXZziJIqTgt' \
+  --data client_secret=pwPg6ZsJQpjLKqFvCYFAwAPlQLLMFslu \
+  --data audience=https://api.mycarcounter.fr
+
+
+
+    curl --request POST \
+  --url https://dev-6xrnn215zh26wxwo.us.auth0.com/oauth/token \
+  --header 'content-type: application/json' \
+  --data '{
+    "client_id":"SYhJ0x4jv0Z2hts19YbtxQSr8liQdqy0",
+    "client_secret":"mXIZrRTcWrUpbLjS_givA-J6e3-IC7O8r0koSI8lecgTXhlFHYH-n1LgPxKWSVdm",
+    "audience":"https://api.mycarcounter.fr",
+    "grant_type":"client_credentials"
+  }'

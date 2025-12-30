@@ -185,7 +185,7 @@ static void stop_application(int status)
 // }
 
 // Adapter avec tes globals existants
-static char g_sd_root[256] = "/var/spool/storage/areas/SD_DISK/axstorage_test_file";
+static char g_sd_root[256] = "/var/spool/storage/areas/SD_DISK/axstorage";
 static char g_serial[64] = "B8A44F46CE99"; // rempli au boot via VAPIX (get serial)
 
 // --- utils: parse YYYY-MM-DD from ISO "YYYY-MM-DDTHH:MM:SSZ"
