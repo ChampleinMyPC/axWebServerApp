@@ -45,8 +45,8 @@
 #define AUTH0_AUDIENCE "https://api.mycarcounter.fr"
 #define AUTH0_GRANT_TYPE "client_credentials"
 
-#define USER "champlein"
-#define PASS "696969"
+#define USER "carflow"
+#define PASS "C@r76240"
 #define APP_ID "web_server_rev_proxy"
 
 // petit buffer mémoire pour récupérer les réponses HTTP

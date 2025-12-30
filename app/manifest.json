@@ -6,14 +6,14 @@
 			"vendor": "MyPC Communications",
 			"embeddedSdkVersion": "3.0",
 			"runMode": "respawn",
-			"version": "1.11.0"
+			"version": "1.11.1"
 		},
 		"configuration": {
 			"settingPage": "index.html",
 			"reverseProxy": [
 				{
 					"apiPath": "my_web_server",
-					"target": "http://127.0.0.1:2001",
+					"target": "http://localhost:2001",
 					"access": "admin"
 				}
 			]
